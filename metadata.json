@@ -1,0 +1,7 @@
+{
+  "name": "AI Career Advisor",
+  "description": "An intelligent career orientation application for high school students, providing personalized career recommendations, university suggestions, a development mind map, and an interactive career path simulator.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
