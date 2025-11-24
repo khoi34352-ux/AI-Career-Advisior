@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import type { AIResults, SimulationPlan, SimulationReport, UserAnswer } from '../types';
 import type { ConversationBranch } from '../App';
@@ -19,7 +18,7 @@ const fileToGenerativePart = async (file: File) => {
 };
 
 export const generateSpeech = async (text: string): Promise<string | null> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.VITE_API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY as string });
   if (!text) return null;
   try {
     // The TTS model expects a prompt that instructs it what to say.
@@ -53,7 +52,7 @@ export const getNextQuestion = async (
   branch: ConversationBranch,
   isFastMode: boolean
 ): Promise<{ nextQuestion: string; options: string[]; isComplete: boolean }> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY as string });
   const model = isFastMode ? 'gemini-flash-lite-latest' : 'gemini-2.5-flash';
   const personaPrompt = `Bạn là AI Career Advisor – một chatbot hướng nghiệp thông minh và thấu cảm, kết hợp phương pháp tư vấn và trị liệu tâm lý. Vai trò của bạn là trò chuyện với học sinh THPT để hiểu sâu về họ, từ đó đưa ra lời khuyên nghề nghiệp tốt nhất.
 
@@ -149,7 +148,7 @@ Chủ đề cần khai thác (hỏi tuần tự):
 
 
 export const getCareerAdvice = async (history: Message[], branch: ConversationBranch): Promise<AIResults> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY as string });
   const historyString = history
       .map(msg => {
           let contentText = '';
@@ -287,7 +286,7 @@ ${finalMotivationPrompt}
 
 
 export const startSimulation = async (career: string): Promise<SimulationPlan> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY as string });
   const prompt = `Bạn là một nhà thiết kế kịch bản mô phỏng nghề nghiệp.
 Nhiệm vụ của bạn là tạo ra một chuỗi các tình huống thực tế cho ngành nghề: "${career}".
 
@@ -352,7 +351,7 @@ export const evaluateSimulation = async (
   career: string,
   answers: UserAnswer[]
 ): Promise<SimulationReport> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY as string });
 
   const answersString = answers.map((a, i) =>
     `Nhiệm vụ ${i + 1}: ${a.taskDescription}\nNgười dùng trả lời: ${a.answer}`
