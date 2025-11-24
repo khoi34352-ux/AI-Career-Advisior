@@ -19,7 +19,7 @@ const fileToGenerativePart = async (file: File) => {
 };
 
 export const generateSpeech = async (text: string): Promise<string | null> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey: process.env.VITE_API_KEY as string });
   if (!text) return null;
   try {
     // The TTS model expects a prompt that instructs it what to say.
