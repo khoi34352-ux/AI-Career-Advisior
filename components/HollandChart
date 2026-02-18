@@ -1,0 +1,107 @@
+import React from 'react';
+import { RIASECScores } from '../types';
+
+interface Props {
+  scores: RIASECScores;
+}
+
+const HollandChart: React.FC<Props> = ({ scores }) => {
+  const labels = [
+    { key: 'R', label: 'Thực tế (R)', color: '#ef4444' },     // Red
+    { key: 'I', label: 'Nghiên cứu (I)', color: '#3b82f6' },  // Blue
+    { key: 'A', label: 'Nghệ thuật (A)', color: '#a855f7' },  // Purple
+    { key: 'S', label: 'Xã hội (S)', color: '#ec4899' },     // Pink
+    { key: 'E', label: 'Quản lý (E)', color: '#f59e0b' },     // Amber
+    { key: 'C', label: 'Nghiệp vụ (C)', color: '#10b981' },   // Emerald
+  ];
+
+  const size = 300;
+  const center = size / 2;
+  const radius = size * 0.35;
+  const angleStep = (Math.PI * 2) / labels.length;
+
+  // Tính toán tọa độ cho các đỉnh của lục giác và các điểm dữ liệu
+  const points = labels.map((item, i) => {
+    const score = scores[item.key as keyof RIASECScores] || 0;
+    const valueRadius = (score / 10) * radius;
+    const x = center + valueRadius * Math.cos(i * angleStep - Math.PI / 2);
+    const y = center + valueRadius * Math.sin(i * angleStep - Math.PI / 2);
+    
+    // Tọa độ nhãn (label)
+    const lx = center + (radius + 25) * Math.cos(i * angleStep - Math.PI / 2);
+    const ly = center + (radius + 25) * Math.sin(i * angleStep - Math.PI / 2);
+    
+    return { x, y, lx, ly, ...item };
+  });
+
+  const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-inner">
+      <h3 className="text-lg font-bold mb-4 text-indigo-700 dark:text-indigo-400">Biểu đồ Tính cách Holland</h3>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        {/* Vẽ các vòng lưới định mức (2, 4, 6, 8, 10) */}
+        {[2, 4, 6, 8, 10].map(step => (
+          <circle
+            key={step}
+            cx={center}
+            cy={center}
+            r={(step / 10) * radius}
+            fill="none"
+            stroke="currentColor"
+            className="text-slate-200 dark:text-slate-700"
+            strokeDasharray="4"
+          />
+        ))}
+
+        {/* Trục tọa độ */}
+        {points.map((p, i) => (
+          <line
+            key={`line-${i}`}
+            x1={center}
+            y1={center}
+            x2={center + radius * Math.cos(i * angleStep - Math.PI / 2)}
+            y2={center + radius * Math.sin(i * angleStep - Math.PI / 2)}
+            stroke="currentColor"
+            className="text-slate-200 dark:text-slate-700"
+          />
+        ))}
+
+        {/* Vùng dữ liệu kết quả */}
+        <polygon
+          points={polygonPath}
+          fill="rgba(79, 70, 229, 0.2)"
+          stroke="#4f46e5"
+          strokeWidth="3"
+        />
+
+        {/* Các nhãn và điểm số */}
+        {points.map((p, i) => (
+          <g key={`label-${i}`}>
+            <text
+              x={p.lx}
+              y={p.ly}
+              textAnchor="middle"
+              className="text-[10px] font-bold fill-slate-600 dark:fill-slate-400"
+            >
+              {p.label}
+            </text>
+            <circle cx={p.x} cy={p.y} r="4" fill={p.color} />
+          </g>
+        ))}
+      </svg>
+      
+      {/* Legend (Chú giải nhanh) */}
+      <div className="grid grid-cols-3 gap-2 mt-4 w-full text-[10px]">
+        {points.map(p => (
+          <div key={p.key} className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }}></div>
+            <span className="dark:text-slate-300">{p.key}: {scores[p.key as keyof RIASECScores]}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default HollandChart;
